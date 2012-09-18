@@ -106,6 +106,7 @@ use overload
 	'<>' => \&increment,
 	'++' => \&increment,
 	'--' => \&decrement,
+	'cmp' => \&compare,
 	'""' => \&as_scalar,
 	'0+' => \&as_scalar;
 
@@ -208,6 +209,39 @@ return
 	(
 	defined $auto_increment ? $self->[AUTO_INCREMENT] = $auto_increment : $self->[AUTO_INCREMENT]
 	);
+}
+
+#-------------------------------------------------------------------------------
+sub compare
+{
+
+=head2 as_scalar
+
+Used in string comparisons, called automatically by perl
+
+B<Return>
+
+=over 2
+
+=item * true or false
+
+=back
+
+=cut
+#~ my @caller = caller() ;
+#~ print  "@caller as_scalar\n" ;
+
+my ($self, $other, $swap) = @_;
+
+my $value =  $self->[VALUES][$self->[CURRENT_INDEX]];
+
+if($self->[AUTO_INCREMENT])
+	{
+	$self->[CURRENT_INDEX]++;
+	$self->[CURRENT_INDEX] = 0 if $self->[CURRENT_INDEX] > $self->[MAX_INDEX];
+	}
+
+return($value cmp $other) ;
 }
 
 #-------------------------------------------------------------------------------
